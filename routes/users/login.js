@@ -1,5 +1,7 @@
 import User from "../../models/user/index.js";
 import bcrypt from "bcrypt";
+import 'dotenv/config'
+import jwt from "jsonwebtoken";
 
 const loginUser = async (req, res) => {
     try {
@@ -8,7 +10,8 @@ const loginUser = async (req, res) => {
         if (user) {
             const checkPassword = bcrypt.compareSync(password, user.password);
             if (checkPassword) {
-                res.status(200).send({ status: 200, message: "Login successful", user })
+                var token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
+                res.status(200).send({ status: 200, message: "Login successful", user, token })
             } else {
                 res.status(401).send({ status: 401, error: "Invalid password" })
             }
